@@ -1,0 +1,53 @@
+nitialize-databaseembedded-database*http://www.springframework.org/schema/jdbc©*http://www.springframework.org/schema/jdbc""embedded-databaseinitialize-databaseinitialize-databaseembedded-database*http://www.springframework.org/schema/jdbcö6http://jboss.org/xml/ns/javax/validation/configuration1.1validation-configvalidation-config6http://jboss.org/xml/ns/javax/validation/configurationí0http://jboss.org/xml/ns/javax/validation/mapping1.0constraint-mappingsconstraint-mappings0http://jboss.org/xml/ns/javax/validation/mappingö6http://jboss.org/xml/ns/javax/validation/configuration1.0validation-configvalidation-config6http://jboss.org/xml/ns/javax/validation/configurationí0http://jboss.org/xml/ns/javax/validation/mapping1.1constraint-mappingsconstraint-mappings0http://jboss.org/xml/ns/javax/validation/mappingñ4http://xmlns.jcp.org/xml/ns/validation/configuration2.0validation-configvalidation-config4http://xmlns.jcp.org/xml/ns/validation/configurationé.http://xmlns.jcp.org/xml/ns/validation/mapping2.0constraint-mappingsconstraint-mappings.http://xmlns.jcp.org/xml/ns/validation/mappingö6http://jboss.org/xml/ns/javax/validation/configuration1.1validation-configvalidation-config6http://jboss.org/xml/ns/javax/validation/configurationö6http://jboss.org/xml/ns/javax/validation/configuration1.0validation-configvalidation-config6http://jboss.org/xml/ns/javax/validation/configurationí0http://jboss.org/xml/ns/javax/validation/mapping1.0constraint-mappingsconstraint-mappings0http://jboss.org/xml/ns/javax/validation/mappingí0http://jboss.org/xml/ns/javax/validation/mapping1.1constraint-mappingsconstraint-mappings0http://jboss.org/xml/ns/javax/validation/mappingñ4http://xmlns.jcp.org/xml/ns/validation/configuration2.0validation-configvalidation-config4http://xmlns.jcp.org/xml/ns/validation/configurationé.http://xmlns.jcp.org/xml/ns/validation/mapping2.0constraint-mappingsconstraint-mappings.http://xmlns.jcp.org/xml/ns/validation/mapping‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson‰#http://redisson.org/schema/redisson1.0Dslave-addresssentinel-addressnode-addresssingle-serversentinel-serversmaster-slave-serverscluster-serversreplicated-serverslocal-cached-map-optionsremote-no-ack
+remote-ackremote-no-resultremote-resultremote-invocation-optionslive-object-registrationlive-objectbinary-streamgeo	set-cache	map-cachebucketbucketshyper-log-loglistlist-multimaplist-multimap-cachelocal-cached-mapmapset-multimapset-multimap-cache	semaphorepermit-expirable-semaphorelock	fair-lockread-write-lock	read-lock
+write-lock
+multi-lockred-lockset
+sorted-setscored-sorted-setlex-sorted-settopicpattern-topicblocking-fair-queuequeuedelayed-queuepriority-queuepriority-dequeblocking-queuebounded-blocking-queuedequeblocking-dequeatomic-longatomic-doublecount-down-latchbit-setbloom-filterscriptexecutor-serviceremote-servicekeyslive-object-service
+rpc-server
+rpc-clientclientredisredisclient#http://redisson.org/schema/redisson/""""
+properties
+properties$LOCAL_SCHEMA$/""""
+properties
+properties$LOCAL_SCHEMA$9""""anti-samy-rulesanti-samy-rules$LOCAL_SCHEMA$9""""anti-samy-rulesanti-samy-rules$LOCAL_SCHEMA$ier	attributelookup-methodreplaced-methodarg-typerefidrefvaluenullarraylistsetmapentrypropskeyprop +http://www.springframework.org/schema/beans6""1.0configurationconfiguration$LOCAL_SCHEMA$

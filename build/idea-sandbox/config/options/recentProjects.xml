@@ -1,0 +1,32 @@
+<application>
+  <component name="RecentProjectsManager">
+    <option name="additionalInfo">
+      <map>
+        <entry key="$USER_HOME$/Desktop/insurance/code/otr-insurance">
+          <value>
+            <RecentProjectMetaInfo frameTitle="insurance – InsuranceUserDTO.java [insurance.main]" projectWorkspaceId="1z9upQTTq7SjXt4LeFaPuZzuW4A">
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IC-211.7628.21" />
+              <option name="buildTimestamp" value="1625054657365" />
+              <frame x="532" y="61" width="1400" height="999" />
+              <option name="productionCode" value="IC" />
+              <option name="projectOpenTimestamp" value="1636624399867" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Desktop/insurance/code/AEPB">
+          <value>
+            <RecentProjectMetaInfo frameTitle="AEPB – AepbApplicationTests.java [AEPB.test]" projectWorkspaceId="1zWTK8knZR2k6zKvhVlmNxlcS5J">
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IC-211.7628.21" />
+              <option name="buildTimestamp" value="1625054657365" />
+              <frame x="682" y="41" width="1400" height="999" />
+              <option name="productionCode" value="IC" />
+              <option name="projectOpenTimestamp" value="1636624546495" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</application>

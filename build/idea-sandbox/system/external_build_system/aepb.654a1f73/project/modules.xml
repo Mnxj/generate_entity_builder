@@ -1,0 +1,8 @@
+<project>
+  <component name="ExternalProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AEPB.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AEPB.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AEPB.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AEPB.test.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,31 @@
+<application>
+  <component name="ActionsLocalSummary">
+    <e n="$Delete">
+      <i c="3" l="1636624539339" />
+    </e>
+    <e n="$Undo">
+      <i c="2" l="1636624552580" />
+    </e>
+    <e n="EditorSplitLine">
+      <i c="2" l="1636624551616" />
+    </e>
+    <e n="Generate">
+      <i c="4" l="1636624553412" />
+    </e>
+    <e n="WelcomeScreen.OpenProject">
+      <i c="2" l="1636624381417" />
+    </e>
+    <e n="com.intellij.diagnostic.IdeMessagePanel$4">
+      <i c="1" l="1636620883416" />
+    </e>
+    <e n="com.intellij.ide.ReopenProjectAction">
+      <i c="1" l="1636624546242" />
+    </e>
+    <e n="com.intellij.openapi.fileEditor.impl.tabActions.CloseTab">
+      <i c="4" l="1636624370072" />
+    </e>
+    <e n="com.tw.otr">
+      <i c="4" l="1636624554087" />
+    </e>
+  </component>
+</application>

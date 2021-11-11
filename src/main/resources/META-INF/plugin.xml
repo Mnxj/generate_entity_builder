@@ -1,0 +1,38 @@
+<idea-plugin>
+    <id>com.tw.plugin.clover</id>
+    <name>GenerateEntityBuilder</name>
+    <version>1.0</version>
+    <vendor email="tianhang.shi@thoughtworks.com" url="https://www.thoughtworks.com/">Clover</vendor>
+    <description><![CDATA[This plugin will help you quickly create entityBuilder by control+ Enter and selecting the name of our plugin.<br>
+        Steps:<br>
+        1. Select a class with the cursor. Press Control + Enter or command +N<br>
+        2. For the first time, you can enter the directory /users/... on the left. ./ "or select a directory.<br>
+        3. click OK, you can view the status through the information in the lower right corner.<br>
+
+        Features:<br>
+        1. Different projects can back up different address information.<br>
+        2. Multiple dependencies can also be handled.<br>
+        3. You can select or enter a directory.<br>
+        4. Handles collection dependencies。<br>
+    <br><br
+    Thanks to Weiwei's pair.<br>
+    Thank you xu Ge for your feedback.<br>
+        ]]></description>
+    <change-notes>GenerateEntityBuilder</change-notes>
+    <idea-version since-build="203.0" until-build="213.*"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <notificationGroup id="Custom Notification Group" displayType="BALLOON"/>
+        <projectService serviceImplementation="com.tw.otr.component.EntityBuilderService"/>
+    </extensions>
+
+    <depends>com.intellij.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="com.tw.otr" class="com.tw.otr.plugin.GenerateEntityBuilder" text="GenerateEntityBuilder" description="GenerateEntityBuilder">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>

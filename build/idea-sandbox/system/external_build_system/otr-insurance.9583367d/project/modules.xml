@@ -1,0 +1,9 @@
+<project>
+  <component name="ExternalProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/insurance.iml" filepath="$PROJECT_DIR$/.idea/modules/insurance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/insurance.main.iml" filepath="$PROJECT_DIR$/.idea/modules/insurance.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/insurance.test.iml" filepath="$PROJECT_DIR$/.idea/modules/insurance.test.iml" />
+    </modules>
+  </component>
+</project>

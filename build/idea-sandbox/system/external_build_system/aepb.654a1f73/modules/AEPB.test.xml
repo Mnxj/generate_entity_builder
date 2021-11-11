@@ -1,0 +1,74 @@
+<module>
+  <component name="DeprecatedModuleOptionManager">
+    <option key="type" value="JAVA_MODULE" />
+  </component>
+  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="com.example" externalSystemModuleType="sourceSet" externalSystemModuleVersion="0.0.1-SNAPSHOT" linkedProjectId="AEPB:test" linkedProjectPath="$MODULE_DIR$/../.." rootProjectPath="$MODULE_DIR$/../.." />
+  <component name="NewModuleRootManager">
+    <output-test url="file://$MODULE_DIR$/../../build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../src/test/java" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="AEPB.main" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-test:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.testcontainers:junit-jupiter:1.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test-autoconfigure:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-test:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-core:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.jayway.jsonpath:json-path:2.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.assertj:assertj-core:3.18.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter:5.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.mockito:mockito-junit-jupiter:3.6.28" level="project" />
+    <orderEntry type="library" name="Gradle: org.mockito:mockito-core:3.6.28" level="project" />
+    <orderEntry type="library" name="Gradle: org.skyscreamer:jsonassert:1.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.xmlunit:xmlunit-core:2.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-logging:2.4.11" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.annotation:jakarta.annotation-api:1.3.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:1.27" level="project" />
+    <orderEntry type="library" name="Gradle: org.testcontainers:testcontainers:1.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-jcl:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: net.minidev:json-smart:2.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.32" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.activation:jakarta.activation-api:1.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.10.22" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.10.22" level="project" />
+    <orderEntry type="library" name="Gradle: org.objenesis:objenesis:3.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-context:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-to-slf4j:2.13.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:jul-to-slf4j:1.7.32" level="project" />
+    <orderEntry type="library" name="Gradle: junit:junit:4.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.docker-java:docker-java-api:3.2.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.docker-java:docker-java-transport-zerodep:3.2.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-compress:1.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.rnorth.duct-tape:duct-tape:1.0.8" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.apiguardian:apiguardian-api:1.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: net.minidev:accessors-smart:2.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-aop:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-beans:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-expression:5.3.10" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.2.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.13.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.11.4" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.docker-java:docker-java-transport:3.2.11" level="project" />
+    <orderEntry type="library" name="Gradle: net.java.dev.jna:jna:5.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm:5.0.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.7.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.7.2" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="AEPB.main" />
+</module>
