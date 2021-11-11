@@ -26,4 +26,20 @@ It will continue to be updated...
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
+
+This plugin will help you quickly create entityBuilder by control+ Enter and selecting the name of our plugin.<br>
+Steps:<br>
+1. Select a class with the cursor. Press Control + Enter or command +N<br>
+2. For the first time, you can enter the directory /users/... on the left. ./ "or select a directory.<br>
+3. click OK, you can view the status through the information in the lower right corner.<br>
+
+        Features:<br>
+        1. Different projects can back up different address information.<br>
+        2. Multiple dependencies can also be handled.<br>
+        3. You can select or enter a directory.<br>
+        4. Handles collection dependencies。<br>
+    <br><br
+   Thanks to Weiwei's pair.<br>
+    Thank you xu Ge for your feedback.
+
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
