@@ -1,5 +1,0 @@
-<options>
-  <configurable id="preferences.keymap" configurable_name="Keymap">
-    <option name="generateentitybuilder" path="ActionManager" hit="GenerateEntityBuilder" />
-  </configurable>
-</options>
