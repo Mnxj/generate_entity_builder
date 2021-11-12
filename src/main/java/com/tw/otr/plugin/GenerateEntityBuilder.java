@@ -15,7 +15,6 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.CollectionListModel;
 import com.tw.otr.notification.MyNotificationGroup;
 import com.tw.otr.ui.GenerateUI;
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +23,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
@@ -35,6 +37,7 @@ import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 public class GenerateEntityBuilder extends AnAction {
     private Set<String> generateClassName=new HashSet<>();
+    private Set<String> importClassNames =new HashSet<>();
     @Override
     public void actionPerformed(AnActionEvent event) {
         PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
@@ -50,6 +53,7 @@ public class GenerateEntityBuilder extends AnAction {
         generateStart(psiType, editor, project);
         generateUI.close(DialogWrapper.OK_EXIT_CODE);
         generateClassName.clear();
+        importClassNames.clear();
 
     }
 
@@ -83,7 +87,8 @@ public class GenerateEntityBuilder extends AnAction {
         String classNameRepository=className+"Repository";
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
-        buffer.append("import lombok.AccessLevel;\n" +
+        importClassNames.forEach(name-> buffer.append("import ").append(name).append(";\n"));
+        buffer.append("\nimport lombok.AccessLevel;\n" +
                 "import lombok.NoArgsConstructor;\n\n" +
                 "@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
                 .append(builderClassName).append(" {\n")
@@ -161,12 +166,20 @@ public class GenerateEntityBuilder extends AnAction {
 
     private Map<String, String> getALLReturnType(PsiClassImpl psiClass,Editor editor,Project project) {
         Map<String, String> mapFields = new HashMap<>();
-        List<PsiField> fields = new CollectionListModel<>(psiClass.getFields()).getItems();
+
+        List<PsiField> fields = new ArrayList<>(Arrays.asList(psiClass.getFields()));
+        PsiClass superClass = psiClass.getSuperClass();
+        while (Objects.nonNull(superClass)){
+            fields.addAll(Arrays.asList(superClass.getFields()));
+            superClass = superClass.getSuperClass();
+        }
         for (PsiField field : fields) {
             mapFields.put(field.getName(), field.getType().getPresentableText());
-            if (!field.getType().getCanonicalText().startsWith("java.")){
-                PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(field.getType().getCanonicalText(), GlobalSearchScope.projectScope(project));
-
+            String canonicalText = field.getType().getCanonicalText();
+            canonicalText = getClassName(canonicalText);
+            if (!canonicalText.startsWith("java.")){
+                PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(canonicalText,
+                        GlobalSearchScope.projectScope(project));
                 if (aClass ==null){
                     continue;
                 }
@@ -174,5 +187,23 @@ public class GenerateEntityBuilder extends AnAction {
             }
         }
         return mapFields;
+    }
+
+    private String getClassName(String canonicalText) {
+        if (canonicalText.contains("util")&& canonicalText.contains("<")){
+            int i = canonicalText.indexOf("<");
+            importClassNames.add(canonicalText.substring(0,i));
+            canonicalText = canonicalText.substring(i+1, canonicalText.length() - 1);
+            if (canonicalText.contains("util")){
+                return getClassName(canonicalText);
+            }
+            String[] split = canonicalText.split(",");
+            if (split.length>1){
+                canonicalText =split[1];
+            }
+            return getClassName(canonicalText);
+        }
+        importClassNames.add(canonicalText);
+        return canonicalText;
     }
 }
