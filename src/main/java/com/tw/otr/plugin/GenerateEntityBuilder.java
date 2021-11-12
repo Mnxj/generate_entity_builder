@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
@@ -88,12 +86,9 @@ public class GenerateEntityBuilder extends AnAction {
         String classNameRepository=className+"Repository";
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
-        buildImportParams(parentMethods, allReturnType, buffer);
         buffer.append("import ").append(importClassNameMap.get(className)).append(";\n");
-
-        buffer.append("\nimport lombok.AccessLevel;\n" +
-                "import lombok.NoArgsConstructor;\n\n" +
-                "@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
+        buildImportParams(parentMethods, allReturnType, buffer);
+        buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
                 .append(builderClassName).append(" {\n")
                 .append("    private ")
                 .append(className)
@@ -166,7 +161,13 @@ public class GenerateEntityBuilder extends AnAction {
                 }
             }
         }
-        importClassNames.forEach(importClassName->buffer.append("import ").append(importClassName).append(";\n"));
+        importClassNames.stream().filter(importClassName->importClassName.contains("com")).forEach(importClassName->buffer.append("import ")
+                .append(importClassName).append(";\n"));
+        buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
+        importClassNames.stream().filter(importClassName->importClassName.contains(".math.")).forEach(importClassName->buffer.append("import ")
+                .append(importClassName).append(";\n"));
+        importClassNames.stream().filter(importClassName->importClassName.contains(".util.")).forEach(importClassName->buffer.append("import ")
+                .append(importClassName).append(";\n"));
     }
 
     private void generateFile(StringBuffer buffer, String fileName,Project project) {
