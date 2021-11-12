@@ -50,5 +50,21 @@ Steps:<br>
   1、可以自动导入包<br>
   2、对导入的包规范化输出<br>
   3、处理多重依赖import导入多余包的问题<br>
+  
+  ### 2021-11-11
+  1、解决插件只能执行一次，后面宕机的情况<br>
+  2、增加可以按照项目地址信息<br>
+  3、可以生成集合中的对象<br>
+  
+  ### 2021-11-10
+  1、可以保存地址信息和输入地址信息<br>
+  2、增加对多重依赖的功能拓展<br>
+
+  ### 2021-11-09
+  1、加入界面界面功能可以手动选择生成的目录地址<br>
+  2、能够生成对应的entityBuilder文件<br>
+  
+  ### 2021-11-08
+  1、项目构建，在指定的entityBuilder文件里面可以自动生成with方法<br>
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
