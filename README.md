@@ -38,6 +38,9 @@ Steps:<br>
         2. Multiple dependencies can also be handled.<br>
         3. You can select or enter a directory.<br>
         4. Handles collection dependencies。<br>
+        5.You can import properties of inheritance relationships<br>
+        6.Can automatically import the packages<br>
+        7.Overrides all collection processing<br>
     <br><br
    Thanks to Weiwei's pair.<br>
     Thank you xu Ge for your feedback.
