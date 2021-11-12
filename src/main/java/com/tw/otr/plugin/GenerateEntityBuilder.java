@@ -158,8 +158,10 @@ public class GenerateEntityBuilder extends AnAction {
                 if (methodName.startsWith("set")) {
                     Arrays.stream(allReturnType.get(convertFiledName).replaceAll("[<>]"," ").split(" "))
                             .forEach(s -> {
-                                importClassNames.add(importClassNameMap.get(s.toLowerCase()));
-                                System.out.println(s);
+                                if (importClassNameMap.containsKey(s.toLowerCase())){
+                                    importClassNames.add(importClassNameMap.get(s.toLowerCase()));
+                                }
+
                             });
                 }
             }
@@ -228,7 +230,9 @@ public class GenerateEntityBuilder extends AnAction {
             return getClassName(canonicalText);
         }
         String[] split = canonicalText.split("\\.");
-        importClassNameMap.put(split[split.length-1].toLowerCase(),canonicalText);
+        if (!canonicalText.contains("lang")){
+            importClassNameMap.put(split[split.length-1].toLowerCase(),canonicalText);
+        }
         return canonicalText;
     }
 }
