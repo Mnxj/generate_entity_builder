@@ -3,7 +3,9 @@
     <name>GenerateEntityBuilder</name>
     <version>1.0</version>
     <vendor email="tianhang.shi@thoughtworks.com" url="https://www.thoughtworks.com/">Clover</vendor>
-    <description><![CDATA[This plugin will help you quickly create entityBuilder by control+ Enter and selecting the name of our plugin.<br>
+    <description><![CDATA[
+
+        This plugin will help you quickly create entityBuilder by control+ Enter and selecting the name of our plugin.<br>
         Steps:<br>
         1. Select a class with the cursor. Press Control + Enter or command +N<br>
         2. For the first time, you can enter the directory /users/... on the left. ./ "or select a directory.<br>
@@ -20,6 +22,7 @@
     <br><br>
     Thanks to Weiwei's pair.<br>
     Thank you xu Ge for your feedback.<br>
+        <br> Welcome to feedback at any time.       Email:tianhang.shi@thoughtworks.com<br>
         ]]></description>
     <change-notes>GenerateEntityBuilder</change-notes>
     <idea-version since-build="203.0" until-build="213.*"/>

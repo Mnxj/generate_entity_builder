@@ -31,13 +31,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 
 public class GenerateEntityBuilder extends AnAction {
     private Set<String> generateClassName=new HashSet<>();
-    private Set<String> importClassNames =new HashSet<>();
+    private Map<String,String> importClassNameMap =new HashMap<>();
     @Override
     public void actionPerformed(AnActionEvent event) {
         PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
@@ -48,13 +50,13 @@ public class GenerateEntityBuilder extends AnAction {
         PsiClassImpl psiType = (PsiClassImpl) psiElement;
         final Editor editor = event.getRequiredData(CommonDataKeys.EDITOR);
         final Project project = event.getRequiredData(CommonDataKeys.PROJECT);
+
         GenerateUI generateUI = new GenerateUI(project);
         generateUI.show();
         generateStart(psiType, editor, project);
         generateUI.close(DialogWrapper.OK_EXIT_CODE);
         generateClassName.clear();
-        importClassNames.clear();
-
+        importClassNameMap.clear();
     }
 
     private void generateStart(PsiClassImpl psiType, Editor editor, Project project) {
@@ -67,11 +69,10 @@ public class GenerateEntityBuilder extends AnAction {
         if (className==null){
             return;
         }
+        importClassNameMap.put(psiType.getName(),psiType.getQualifiedName());
         PsiMethod[] parentMethods = psiType.getAllMethods();
         String variableClassName = lowercaseLetter(className);
-        // final Document document = editor.getDocument();
         Caret primaryCaret = editor.getCaretModel().getPrimaryCaret();
-//        int start = primaryCaret.getVisualLineEnd();
         primaryCaret.removeSelection();
         Map<String, String> allReturnType = getALLReturnType(psiType,editor, project);
         StringBuffer buffer = new StringBuffer();
@@ -83,11 +84,13 @@ public class GenerateEntityBuilder extends AnAction {
         if (com<0){
             return;
         }
-        String packageName=folderName.substring(com).replaceAll("/",".");
+        String packageName=folderName.substring(com).replaceAll("/",".").trim();
         String classNameRepository=className+"Repository";
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
-        importClassNames.forEach(name-> buffer.append("import ").append(name).append(";\n"));
+        buildImportParams(parentMethods, allReturnType, buffer);
+        buffer.append("import ").append(importClassNameMap.get(className)).append(";\n");
+
         buffer.append("\nimport lombok.AccessLevel;\n" +
                 "import lombok.NoArgsConstructor;\n\n" +
                 "@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
@@ -121,6 +124,11 @@ public class GenerateEntityBuilder extends AnAction {
                     .append(");\n    }\n\n");
         }
         String fileName= folderName + "/" + builderClassName + ".java";
+        buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType, buffer);
+        generateFile(buffer, fileName,project);
+    }
+
+    private void buildWithParams(String builderClassName, PsiMethod[] parentMethods, String variableClassName, Map<String, String> allReturnType, StringBuffer buffer) {
         for (PsiMethod method : parentMethods) {
             String methodName = method.getName();
             if (methodName.startsWith("set")) {
@@ -138,10 +146,25 @@ public class GenerateEntityBuilder extends AnAction {
             }
         }
         buffer.append("}");
-        generateFile(buffer, fileName,project);
-//        WriteCommandAction.runWriteCommandAction(project, () ->
-//                document.insertString(start, buffer.toString())
-//        );
+    }
+
+    private void buildImportParams(PsiMethod[] parentMethods, Map<String, String> allReturnType, StringBuffer buffer) {
+        Set<String> importClassNames =new HashSet<>();
+        for (PsiMethod method : parentMethods) {
+            String methodName = method.getName();
+            if (methodName.startsWith("set")) {
+                String filedName = methodName.replace("set", "");
+                String convertFiledName = lowercaseLetter(filedName);
+                if (methodName.startsWith("set")) {
+                    Arrays.stream(allReturnType.get(convertFiledName).replaceAll("[<>]"," ").split(" "))
+                            .forEach(s -> {
+                                importClassNames.add(importClassNameMap.get(s.toLowerCase()));
+                                System.out.println(s);
+                            });
+                }
+            }
+        }
+        importClassNames.forEach(importClassName->buffer.append("import ").append(importClassName).append(";\n"));
     }
 
     private void generateFile(StringBuffer buffer, String fileName,Project project) {
@@ -166,7 +189,6 @@ public class GenerateEntityBuilder extends AnAction {
 
     private Map<String, String> getALLReturnType(PsiClassImpl psiClass,Editor editor,Project project) {
         Map<String, String> mapFields = new HashMap<>();
-
         List<PsiField> fields = new ArrayList<>(Arrays.asList(psiClass.getFields()));
         PsiClass superClass = psiClass.getSuperClass();
         while (Objects.nonNull(superClass)){
@@ -192,7 +214,9 @@ public class GenerateEntityBuilder extends AnAction {
     private String getClassName(String canonicalText) {
         if (canonicalText.contains("util")&& canonicalText.contains("<")){
             int i = canonicalText.indexOf("<");
-            importClassNames.add(canonicalText.substring(0,i));
+            String substring = canonicalText.substring(0, i);
+            String[] split1 = substring.split("\\.");
+            importClassNameMap.put(split1[split1.length-1].toLowerCase(),substring);
             canonicalText = canonicalText.substring(i+1, canonicalText.length() - 1);
             if (canonicalText.contains("util")){
                 return getClassName(canonicalText);
@@ -203,7 +227,8 @@ public class GenerateEntityBuilder extends AnAction {
             }
             return getClassName(canonicalText);
         }
-        importClassNames.add(canonicalText);
+        String[] split = canonicalText.split("\\.");
+        importClassNameMap.put(split[split.length-1].toLowerCase(),canonicalText);
         return canonicalText;
     }
 }

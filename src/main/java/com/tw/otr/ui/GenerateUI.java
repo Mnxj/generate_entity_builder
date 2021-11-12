@@ -35,7 +35,7 @@ public class GenerateUI extends DialogWrapper {
     @Override
     protected @NotNull Action getOKAction() {
 
-        generateFile(this.jTextArea.getText());
+        generateFile(this.jTextArea.getText().trim());
         return super.getOKAction();
     }
 
