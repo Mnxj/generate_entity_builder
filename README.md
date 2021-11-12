@@ -45,8 +45,10 @@ Steps:<br>
    Thanks to Weiwei's pair.<br>
     Thank you xu Ge for your feedback.
 
-## 2021-11-12
-  1、可以自动导入包
-  2、对导入的包规范化输出
-  3、处理多重依赖import导入多余包的问题
+##时间线
+  ###2021-11-12
+  1、可以自动导入包<br>
+  2、对导入的包规范化输出<br>
+  3、处理多重依赖import导入多余包的问题<br>
+
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
