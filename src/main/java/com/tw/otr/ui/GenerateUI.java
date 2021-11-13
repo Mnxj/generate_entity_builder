@@ -7,70 +7,62 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.tw.otr.component.ConfigState;
-import com.tw.otr.component.EntityBuilderService;
-import com.tw.otr.notification.MyNotificationGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 
+import static com.tw.otr.util.Utils.generateFile;
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 
 public class GenerateUI extends DialogWrapper {
     private Project project;
-    private String text;
-    private JTextArea jTextArea;
+    private ConfigState configState;
+    private JTextArea jTextAreaPath;
+    private JTextArea jTextAreaPackageName;
+    private JLabel jLabelPackageName;
+    private JButton jButton;
 
     public GenerateUI(Project project) {
         super(true);
         setTitle("生成entityBuilder");
         this.project=project;
-        this.text=readFileOrFindFolder(project);
+        this.configState=readFileOrFindFolder(project);
         init();
     }
 
     @Override
     protected @NotNull Action getOKAction() {
-
-        generateFile(this.jTextArea.getText().trim());
+        generateFile(this.project,this.jTextAreaPath.getText().trim(),this.jTextAreaPackageName.getText().trim());
         return super.getOKAction();
     }
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel jPanel =new JPanel();
-        jPanel.setPreferredSize(new Dimension(300, 150));
-        JButton jButton=new JButton("点击选择目录");
-        jTextArea = new JTextArea(this.text,6,50);
-        jPanel.setLayout(new BorderLayout(1,1));
+        jLabelPackageName=new JLabel("StartPackageName(列：com.intellij -> com)");
+        jLabelPackageName.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabelPackageName.setPreferredSize(new Dimension(5, 20));
+        jTextAreaPackageName = new JTextArea(this.configState.getStartPackageName(),1,20);
+        jButton=new JButton("选择目录or输入");
+        jButton.setPreferredSize(new Dimension(5, 10));
+        jTextAreaPath = new JTextArea(this.configState.getPath(),2,40);
+
         jButton.addActionListener(e -> {
             VirtualFile virtualFile = FileChooser.chooseFile(
                     FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                     project, ProjectUtil.guessProjectDir(project));
             if (virtualFile!=null){
-                jTextArea.setText(virtualFile.getPath());
+                jTextAreaPath.setText(virtualFile.getPath());
             }
         });
-        jPanel.add("East",jButton);
-        jPanel.add("West",jTextArea);
-
+        jPanel.add(jLabelPackageName);
+        jPanel.add(jTextAreaPackageName);
+        jPanel.add(jButton);
+        jPanel.add(jTextAreaPath);
+        jPanel.setLayout(new GridLayout(2,2,5,5));
         return jPanel ;
-    }
-    private void generateFile(String pathData) { ;
-        File existsFile=new File(pathData);
-        if (existsFile.exists()&&existsFile.isFile()){
-            MyNotificationGroup.notifyError(project,"路径错误\n"+pathData);
-        } else{
-            existsFile.mkdirs();
-        }
-        if (pathData.indexOf('/')==-1){
-            return;
-        }
-        ConfigState configState = EntityBuilderService.getInstance(this.project).getState();
-        configState.setPath(pathData);
-        EntityBuilderService.getInstance(this.project).loadState(configState);
     }
 }

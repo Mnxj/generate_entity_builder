@@ -15,6 +15,7 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.tw.otr.component.ConfigState;
 import com.tw.otr.notification.MyNotificationGroup;
 import com.tw.otr.ui.GenerateUI;
 import org.jetbrains.annotations.NotNull;
@@ -74,11 +75,13 @@ public class GenerateEntityBuilder extends AnAction {
         primaryCaret.removeSelection();
         Map<String, String> allReturnType = getALLReturnType(psiType,editor, project);
         StringBuffer buffer = new StringBuffer();
-        String folderName = readFileOrFindFolder(project);
+        ConfigState configState = readFileOrFindFolder(project);
+        String startPackageName = configState.getStartPackageName();
+        String folderName = configState.getPath();
         if (folderName == null) {
             return;
         }
-        int com = folderName.indexOf("com");
+        int com = folderName.indexOf(startPackageName);
         if (com<0){
             return;
         }
@@ -87,7 +90,7 @@ public class GenerateEntityBuilder extends AnAction {
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
         buffer.append("import ").append(importClassNameMap.get(className)).append(";\n");
-        buildImportParams(parentMethods, allReturnType, buffer);
+        buildImportParams(parentMethods, allReturnType, buffer,startPackageName);
         buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
                 .append(builderClassName).append(" {\n")
                 .append("    private ")
@@ -123,7 +126,11 @@ public class GenerateEntityBuilder extends AnAction {
         generateFile(buffer, fileName,project);
     }
 
-    private void buildWithParams(String builderClassName, PsiMethod[] parentMethods, String variableClassName, Map<String, String> allReturnType, StringBuffer buffer) {
+    private void buildWithParams(String builderClassName,
+                                 PsiMethod[] parentMethods,
+                                 String variableClassName,
+                                 Map<String, String> allReturnType,
+                                 StringBuffer buffer) {
         for (PsiMethod method : parentMethods) {
             String methodName = method.getName();
             if (methodName.startsWith("set")) {
@@ -143,7 +150,10 @@ public class GenerateEntityBuilder extends AnAction {
         buffer.append("}");
     }
 
-    private void buildImportParams(PsiMethod[] parentMethods, Map<String, String> allReturnType, StringBuffer buffer) {
+    private void buildImportParams(PsiMethod[] parentMethods,
+                                   Map<String, String> allReturnType,
+                                   StringBuffer buffer,
+                                   String startPackageName) {
         Set<String> importClassNames =new HashSet<>();
         for (PsiMethod method : parentMethods) {
             String methodName = method.getName();
@@ -161,7 +171,7 @@ public class GenerateEntityBuilder extends AnAction {
                 }
             }
         }
-        importClassNames.stream().filter(importClassName->importClassName.contains("com")).forEach(importClassName->buffer.append("import ")
+        importClassNames.stream().filter(importClassName->importClassName.contains(startPackageName)).forEach(importClassName->buffer.append("import ")
                 .append(importClassName).append(";\n"));
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
         importClassNames.stream().filter(importClassName->importClassName.contains(".math.")).forEach(importClassName->buffer.append("import ")
@@ -170,7 +180,9 @@ public class GenerateEntityBuilder extends AnAction {
                 .append(importClassName).append(";\n"));
     }
 
-    private void generateFile(StringBuffer buffer, String fileName,Project project) {
+    private void generateFile(StringBuffer buffer,
+                              String fileName,
+                              Project project) {
         File file=new File(fileName);
         try {
             file.delete();
@@ -190,7 +202,9 @@ public class GenerateEntityBuilder extends AnAction {
         return Character.toLowerCase(className.charAt(0)) + className.substring(1);
     }
 
-    private Map<String, String> getALLReturnType(PsiClassImpl psiClass,Editor editor,Project project) {
+    private Map<String, String> getALLReturnType(PsiClassImpl psiClass,
+                                                 Editor editor,
+                                                 Project project) {
         Map<String, String> mapFields = new HashMap<>();
         List<PsiField> fields = new ArrayList<>(Arrays.asList(psiClass.getFields()));
         PsiClass superClass = psiClass.getSuperClass();
