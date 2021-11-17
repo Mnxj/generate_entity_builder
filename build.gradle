@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.intellij' version '1.2.1'
 }
 group 'com.tw.otr'
-version '0.0.6'
+version '0.1.0'
 
 repositories {
     mavenCentral()
