@@ -18,7 +18,6 @@ public class GenerateEntityBuilder extends AnAction {
         boolean flag = generateUI.getFlag();
         generateUI.close(DialogWrapper.OK_EXIT_CODE);
         if (flag){
-            System.out.println(flag);
             EntityBuilderAction entityBuilderAction= new EntityBuilderAction(event);
             SelectClassUI selectClassUI=new SelectClassUI(entityBuilderAction.getReturnType());
             selectClassUI.show();
