@@ -26,4 +26,7 @@ public class Utils {
         configState.setStartPackageName(startPackageName);
         EntityBuilderService.getInstance(project).loadState(configState);
     }
+    public static String lowercaseLetter(String className) {
+        return Character.toLowerCase(className.charAt(0)) + className.substring(1);
+    }
 }

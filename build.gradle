@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.intellij' version '1.2.1'
 }
 group 'com.tw.otr'
-version '0.0.5'
+version '0.0.6'
 
 repositories {
     mavenCentral()
@@ -22,5 +22,4 @@ intellij {
 }
 patchPluginXml {
     version project.version
-    changeNotes = "GenerateEntityBuilder"
 }
