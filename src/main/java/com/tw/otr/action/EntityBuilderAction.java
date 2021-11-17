@@ -66,6 +66,7 @@ public class EntityBuilderAction {
         if(generateClassName.contains(psiType.getQualifiedName())){
             return;
         }
+        generateClassName.add(psiType.getQualifiedName());
         String className = psiType.getName();
         String builderClassName = className + "Builder";
         if (className==null){
