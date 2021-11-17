@@ -25,35 +25,35 @@
         5.You can import properties of inheritance relationships<br>
         6.Can automatically import the packages<br>
         7.Overrides all collection processing<br>
-        8.Add different package structure handling<br>
+        8.Add different package structure handling<br><br>
 
-        2021-11-17
+        2021-11-17<br>
         1、重新设计UI界面<br>
-        2、如果一个选择的类有多个类属性，现在可以按需导入。<br>
+        2、如果一个选择的类有多个类属性，现在可以按需导入。<br><br>
 
-         2021-11-13
+         2021-11-13<br>
         1、设计UI界面<br>
-        2、可以根据自己所在项目输入开始包的信息：如我们大多是com.project.dto 只需要输入com，可以让我们方便定位，并为您自动导入包<br>
+        2、可以根据自己所在项目输入开始包的信息：如我们大多是com.project.dto 只需要输入com，可以让我们方便定位，并为您自动导入包<br><br>
 
-         2021-11-12
+         2021-11-12<br>
         1、可以自动导入包<br>
         2、对导入的包规范化输出<br>
-        3、处理多重依赖import导入多余包的问题<br>
+        3、处理多重依赖import导入多余包的问题<br><br>
 
-         2021-11-11
+         2021-11-11<br>
         1、解决插件只能执行一次，后面宕机的情况<br>
         2、增加可以按照项目地址信息<br>
-        3、可以生成集合中的对象<br>
+        3、可以生成集合中的对象<br><br>
 
-         2021-11-10
+         2021-11-10<br>
         1、可以保存地址信息和输入地址信息<br>
-        2、增加对多重依赖的功能拓展<br>
+        2、增加对多重依赖的功能拓展<br><br>
 
-         2021-11-09
+         2021-11-09<br>
         1、加入界面界面功能可以手动选择生成的目录地址<br>
-        2、能够生成对应的entityBuilder文件<br>
+        2、能够生成对应的entityBuilder文件<br><br>
 
-         2021-11-08
+         2021-11-08<br>
         1、项目构建，在指定的entityBuilder文件里面可以自动生成with方法<br>
         ]]></change-notes>
     <idea-version since-build="203.0" until-build="213.*"/>

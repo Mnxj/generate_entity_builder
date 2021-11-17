@@ -34,18 +34,19 @@ public class GeneratePathUI extends DialogWrapper {
         super(true);
         setTitle("生成entityBuilder");
         this.project=project;
+        this.flag=false;
         this.configState=readFileOrFindFolder(project);
         init();
     }
 
     @Override
-    protected @NotNull Action getOKAction() {
+    protected void doOKAction() {
         generateFile(this.project,this.jTextAreaPath.getText().trim(),this.jTextAreaPackageName.getText().trim());
         this.flag=true;
-        return super.getOKAction();
+        super.doOKAction();
     }
 
-    public Boolean getFlag() {
+    public boolean getFlag() {
         return flag;
     }
 

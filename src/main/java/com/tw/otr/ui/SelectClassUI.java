@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.tw.otr.util.Utils.generateFile;
+
 public class SelectClassUI extends DialogWrapper {
 
     private Map<String,PsiClassImpl> childClassMap =new HashMap<>();
@@ -31,9 +33,9 @@ public class SelectClassUI extends DialogWrapper {
     }
 
     @Override
-    protected @NotNull Action getOKAction() {
+    protected void doOKAction() {
         list.getSelectedValuesList().forEach(value->childClassMap.remove(value));
-        return super.getOKAction();
+        super.doOKAction();
     }
 
     public Set<PsiClassImpl> getChildClass() {
