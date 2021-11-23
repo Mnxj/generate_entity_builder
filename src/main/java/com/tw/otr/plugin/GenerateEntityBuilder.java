@@ -24,7 +24,6 @@ public class GenerateEntityBuilder extends AnAction {
             entityBuilderAction.setChildClass(selectClassUI.getChildClass());
             selectClassUI.close(DialogWrapper.OK_EXIT_CODE);
             entityBuilderAction.generateBuild();
-            entityBuilderAction.close();
         }
     }
 }

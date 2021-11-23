@@ -11,7 +11,7 @@ public class Utils {
     public static ConfigState readFileOrFindFolder(Project project) {
         return EntityBuilderService.getInstance(project).getState();
     }
-    public  static void generateFile(Project project,String pathData,String startPackageName) { ;
+    public  static void generateFile(Project project,String pathData) { ;
         File existsFile=new File(pathData);
         if (existsFile.exists()&&existsFile.isFile()){
             MyNotificationGroup.notifyError(project,"路径错误\n"+pathData);
@@ -23,7 +23,6 @@ public class Utils {
         }
         ConfigState configState = EntityBuilderService.getInstance(project).getState();
         configState.setPath(pathData);
-        configState.setStartPackageName(startPackageName);
         EntityBuilderService.getInstance(project).loadState(configState);
     }
     public static String lowercaseLetter(String className) {
