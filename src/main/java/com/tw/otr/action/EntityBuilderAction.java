@@ -119,7 +119,7 @@ public class EntityBuilderAction {
                 .append(className)
                 .append(" build() {\n        return ")
                 .append(convertClassName)
-                .append(";    \n}\n\n");
+                .append(";\n    }\n\n");
         if (!className.endsWith("DTO")) {
             buffer.append("    public ")
                     .append(className)
