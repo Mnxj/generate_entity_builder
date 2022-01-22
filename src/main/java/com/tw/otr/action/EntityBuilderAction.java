@@ -18,9 +18,6 @@ import com.tw.otr.notification.MyNotificationGroup;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static com.tw.otr.util.Utils.getVariable;
 import static com.tw.otr.util.Utils.lowercaseLetter;
@@ -142,7 +140,7 @@ public class EntityBuilderAction {
         if (com < 0) {
             return null;
         }
-        return folderName.substring(com + JAVA_VARIABLE.length()).replace("/+", ".").trim();
+        return Pattern.compile("/").matcher(folderName.substring(com + JAVA_VARIABLE.length())).replaceAll(".").trim();
     }
 
     private void buildWithParams(String builderClassName,
