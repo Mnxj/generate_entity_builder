@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.intellij' version '1.2.1'
 }
 group 'com.tw.otr'
-version '0.1.2'
+version '0.1.3'
 
 repositories {
     mavenCentral()
@@ -22,4 +22,8 @@ intellij {
 }
 patchPluginXml {
     version project.version
+}
+
+test {
+    useJUnitPlatform()
 }

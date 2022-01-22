@@ -55,6 +55,9 @@
 
          2021-11-08<br>
         1、项目构建，在指定的entityBuilder文件里面可以自动生成with方法<br>
+
+        2022-01-17<br>
+        1、修复build花括号少一个空格的情况<br>
         ]]></change-notes>
     <idea-version since-build="203.0" until-build="213.*"/>
     <extensions defaultExtensionNs="com.intellij">

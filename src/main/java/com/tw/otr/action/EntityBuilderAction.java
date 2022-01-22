@@ -1,10 +1,7 @@
 package com.tw.otr.action;
 
-import com.intellij.codeInsight.actions.AbstractLayoutCodeProcessor;
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -15,16 +12,15 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
 import com.tw.otr.component.ConfigState;
 import com.tw.otr.notification.MyNotificationGroup;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,10 +30,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.tw.otr.util.Utils.getVariable;
 import static com.tw.otr.util.Utils.lowercaseLetter;
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 public class EntityBuilderAction {
+    public static final String IMPORT_VARIABLE = "import ";
+    public static final String PUBLIC_VARIABLE = "    public ";
+    public static final String JAVA_VARIABLE = "java.";
     private Set<String> generateClassName;
     private Map<String, String> importClassNameMap;
     private Set<PsiClassImpl> childClass;
@@ -45,6 +45,7 @@ public class EntityBuilderAction {
     private Project project;
     private AnActionEvent event;
     private PsiClassImpl psiClass;
+    private StringBuilder buffer;
 
     public EntityBuilderAction(AnActionEvent event) {
         this.event = event;
@@ -57,11 +58,12 @@ public class EntityBuilderAction {
         this.importClassNameMap = new HashMap<>();
         this.childClass = new HashSet<>();
         this.project = event.getRequiredData(CommonDataKeys.PROJECT);
-        PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
+        PsiElement psiElement = event.getData(CommonDataKeys.PSI_ELEMENT);
         if (psiElement == null) {
             return;
         }
         this.psiClass = (PsiClassImpl) psiElement;
+        buffer = new StringBuilder();
     }
 
     public void generateBuild() {
@@ -86,7 +88,7 @@ public class EntityBuilderAction {
         Caret primaryCaret = editor.getCaretModel().getPrimaryCaret();
         primaryCaret.removeSelection();
         Map<String, String> allReturnType = getReturnType(psiType);
-        StringBuffer buffer = new StringBuffer();
+
         ConfigState configState = readFileOrFindFolder(project);
         String folderName = configState.getPath();
         if (folderName == null) {
@@ -99,8 +101,8 @@ public class EntityBuilderAction {
         String classNameRepository = className + "Repository";
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
-        buffer.append("import ").append(importClassNameMap.get(className)).append(";\n");
-        buildImportParams(parentMethods, allReturnType, buffer,packageName);
+        buffer.append(IMPORT_VARIABLE).append(importClassNameMap.get(className)).append(";\n");
+        buildImportParams(parentMethods, allReturnType,packageName);
         buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
                 .append(builderClassName).append(" {\n")
                 .append("    private ")
@@ -115,13 +117,13 @@ public class EntityBuilderAction {
                 .append(" withDefault() {\n        return new ")
                 .append(builderClassName)
                 .append("();\n    }\n\n");
-        buffer.append("    public ")
+        buffer.append(PUBLIC_VARIABLE)
                 .append(className)
                 .append(" build() {\n        return ")
                 .append(convertClassName)
                 .append(";\n    }\n\n");
         if (!className.endsWith("DTO")) {
-            buffer.append("    public ")
+            buffer.append(PUBLIC_VARIABLE)
                     .append(className)
                     .append(" persist() {\n        ")
                     .append(classNameRepository)
@@ -131,9 +133,8 @@ public class EntityBuilderAction {
                     .append(convertClassName)
                     .append(");\n    }\n\n");
         }
-        String fileName = folderName + "/" + builderClassName + ".java";
-        buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType, buffer);
-        generateFile(buffer, fileName);
+        buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
+        generateFile(folderName + "/" + builderClassName + ".java");
     }
 
     private String getPackageName(String folderName) {
@@ -141,20 +142,19 @@ public class EntityBuilderAction {
         if (com < 0) {
             return null;
         }
-        return folderName.substring(com + "java.".length()).replaceAll("/", ".").trim();
+        return folderName.substring(com + JAVA_VARIABLE.length()).replace("/+", ".").trim();
     }
 
     private void buildWithParams(String builderClassName,
                                  PsiMethod[] parentMethods,
                                  String variableClassName,
-                                 Map<String, String> allReturnType,
-                                 StringBuffer buffer) {
+                                 Map<String, String> allReturnType) {
         for (PsiMethod method : parentMethods) {
             String methodName = method.getName();
             if (methodName.startsWith("set")) {
                 String filedName = methodName.replace("set", "");
                 String convertFiledName = lowercaseLetter(filedName);
-                buffer.append("    public ").append(builderClassName)
+                buffer.append(PUBLIC_VARIABLE).append(builderClassName)
                         .append(" with").append(filedName)
                         .append("(").append(allReturnType.get(convertFiledName))
                         .append(" ").append(convertFiledName).append(") {\n");
@@ -170,7 +170,6 @@ public class EntityBuilderAction {
 
     private void buildImportParams(PsiMethod[] parentMethods,
                                    Map<String, String> allReturnType,
-                                   StringBuffer buffer,
                                    String packageName) {
         Set<String> importClassNames = new HashSet<>();
         for (PsiMethod method : parentMethods) {
@@ -191,17 +190,16 @@ public class EntityBuilderAction {
         }
 
         importClassNames.stream().filter(importClassName->importClassName.contains( packageName.split("\\.")[0]))
-                .forEach(importClassName->buffer.append("import ")
+                .forEach(importClassName->buffer.append(IMPORT_VARIABLE)
                 .append(importClassName).append(";\n"));
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
-        importClassNames.stream().filter(importClassName->importClassName.contains(".math.")).forEach(importClassName->buffer.append("import ")
+        importClassNames.stream().filter(importClassName->importClassName.contains(".math.")).forEach(importClassName->buffer.append(IMPORT_VARIABLE)
                 .append(importClassName).append(";\n"));
-        importClassNames.stream().filter(importClassName->importClassName.contains(".util.")).forEach(importClassName->buffer.append("import ")
+        importClassNames.stream().filter(importClassName->importClassName.contains(".util.")).forEach(importClassName->buffer.append(IMPORT_VARIABLE)
                 .append(importClassName).append(";\n"));
     }
 
-    private void generateFile(StringBuffer buffer,
-                              String fileName) {
+    private void generateFile(String fileName) {
         File file = new File(fileName);
         try {
             file.delete();
@@ -226,10 +224,10 @@ public class EntityBuilderAction {
             superClass = superClass.getSuperClass();
         }
         for (PsiField field : fields) {
-            mapFields.put(field.getName(), field.getType().getPresentableText());
+            mapFields.put(getVariable(field.getName()), field.getType().getPresentableText());
             String canonicalText = field.getType().getCanonicalText();
             canonicalText = getClassName(canonicalText);
-            if (!canonicalText.startsWith("java.")) {
+            if (!canonicalText.startsWith(JAVA_VARIABLE)) {
                 PsiClass aClass = getPsiClass(canonicalText);
                 if (aClass == null || childClass.contains(aClass)) {
                     continue;
@@ -282,7 +280,7 @@ public class EntityBuilderAction {
         for (PsiField field : fields) {
             String canonicalText = field.getType().getCanonicalText();
             canonicalText = getClassName(canonicalText);
-            if (!canonicalText.startsWith("java.")) {
+            if (!canonicalText.startsWith(JAVA_VARIABLE)) {
                 PsiClass aClass = getPsiClass(canonicalText);
                 if (aClass == null) {
                     continue;

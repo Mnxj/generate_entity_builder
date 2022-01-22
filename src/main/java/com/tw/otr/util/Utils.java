@@ -28,4 +28,9 @@ public class Utils {
     public static String lowercaseLetter(String className) {
         return Character.toLowerCase(className.charAt(0)) + className.substring(1);
     }
+    public static String getVariable(String name) {
+        return name.startsWith("is")
+                ? String.valueOf(name.charAt(2)).toLowerCase()+name.substring(3)
+                : name;
+    }
 }

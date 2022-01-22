@@ -25,7 +25,6 @@ public class GeneratePathUI extends DialogWrapper {
     private Project project;
     private ConfigState configState;
     private JTextArea jTextAreaPath;
-    private JTextArea jTextAreaPackageName;
     private boolean flag;
 
     private JButton jButton;
