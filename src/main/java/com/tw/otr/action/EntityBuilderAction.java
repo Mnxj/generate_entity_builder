@@ -15,11 +15,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.tw.otr.component.ConfigState;
 import com.tw.otr.notification.MyNotificationGroup;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
@@ -134,39 +136,75 @@ public class EntityBuilderAction {
                     .append(");\n    }\n\n");
         }
         buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
-        handleFile(folderName + "/" + builderClassName + ".java",builderClassName);
+        handleFile(folderName + "/" + builderClassName + ".java");
     }
 
-    private void handleFile( String fileName,String builderClassName) {
-        if (!generateFileFlag){
+    private void handleFile(String fileName) {
+        if (generateFileFlag) {
             generateFile(fileName);
-        }else{
-            newContentToFile(fileName,builderClassName);
+        } else {
+            newContentToFile(fileName);
         }
     }
 
-    private void generateFile(String fileName){
+    private void generateFile(String fileName) {
         File file = new File(fileName);
         try {
-            Files.delete(Path.of(fileName));
             file.createNewFile();
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file.getAbsoluteFile()))){
-                bufferedWriter.write(buffer.toString());
-            }
-            MyNotificationGroup.notifyInfo(project, "build成功\n" + fileName);
+            writeContent(file, buffer.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
             MyNotificationGroup.notifyError(project, "build失败\n" + fileName + "\nerror:" + e.getMessage());
         }
     }
 
-    private void newContentToFile(String fileName,String builderClassName){
+
+    private void newContentToFile(String fileName) {
         File file = new File(fileName);
-        if (!file.exists()){
+        if (!file.exists()) {
             MyNotificationGroup.notifyError(project, "文件不存在\n" + fileName);
         }
+        String newContent = buffer.toString();
+        try {
+            StringBuilder bufferWithDefault = new StringBuilder();
+            bufferWithDefault.append(" withDefault() {\n");
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                String line;
+                boolean isWithDefault = false;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (isWithDefault) {
+                        bufferWithDefault.append(line).append("\n");
+                        if (line.contains("}")) {
+                            break;
+                        }
+                    }
+                    if (line.contains("withDefault()")) {
+                        isWithDefault = true;
+                    }
+                }
+            }
+            Matcher matcher = regex("( withDefault\\(\\) \\{\\n)([\\s\\S]*?)    }\\n", newContent);
+            String oldWithDefault = null;
+            if (matcher.find()) {
+                oldWithDefault = matcher.group();
+            }
+            assert oldWithDefault != null;
+            int length = oldWithDefault.length();
+            String leftContent = newContent.substring(0, newContent.indexOf(oldWithDefault));
+            String rightContent = newContent.substring(newContent.indexOf(oldWithDefault) + length);
+            writeContent(file, leftContent + bufferWithDefault + rightContent);
+        } catch (IOException e) {
+            MyNotificationGroup.notifyError(project, "生成失败\n" + fileName + "\nerror:" + e.getMessage());
+        }
+    }
 
-
+    private void writeContent(File file, String content) throws IOException {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file.getAbsoluteFile()))) {
+            bufferedWriter.write(content);
+            bufferedWriter.flush();
+            MyNotificationGroup.notifyInfo(project, "成功\n" + file);
+        }
     }
 
     private String getPackageName(String folderName) {
@@ -174,7 +212,11 @@ public class EntityBuilderAction {
         if (com < 0) {
             return null;
         }
-        return Pattern.compile("/").matcher(folderName.substring(com + JAVA_VARIABLE.length())).replaceAll(".").trim();
+        return regex("/", folderName.substring(com + JAVA_VARIABLE.length())).replaceAll(".").trim();
+    }
+
+    private Matcher regex(String regex, String str) {
+        return Pattern.compile(regex).matcher(str);
     }
 
     private void buildWithParams(String builderClassName,
@@ -241,7 +283,7 @@ public class EntityBuilderAction {
             superClass = superClass.getSuperClass();
         }
         for (PsiField field : fields) {
-            mapFields.put(getVariable(field.getName()), field.getType().getPresentableText());
+            mapFields.put(getVariable(field.getName(), field.getType().getPresentableText()), field.getType().getPresentableText());
             String canonicalText = field.getType().getCanonicalText();
             canonicalText = getClassName(canonicalText);
             if (!canonicalText.startsWith(JAVA_VARIABLE)) {
@@ -308,10 +350,8 @@ public class EntityBuilderAction {
         return childClass;
     }
 
-    private String getVariable(String name) {
-        return name.startsWith("is")
-                ? String.valueOf(name.charAt(2)).toLowerCase()+name.substring(3)
-                : name;
+    private String getVariable(String name, String type) {
+        return name.startsWith("is") && Character.isLowerCase(type.charAt(0)) ? String.valueOf(name.charAt(2)).toLowerCase() + name.substring(3) : name;
     }
 
     private String lowercaseLetter(String className) {

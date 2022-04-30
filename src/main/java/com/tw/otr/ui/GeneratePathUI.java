@@ -28,7 +28,7 @@ public class GeneratePathUI extends DialogWrapper {
     private ConfigState configState;
     private JTextArea jTextAreaPath;
     private boolean flag;
-
+    boolean generateFileFlag;
     private JButton jButton;
 
     public GeneratePathUI(Project project) {
@@ -73,12 +73,7 @@ public class GeneratePathUI extends DialogWrapper {
     @NotNull
     private JPanel getJPanel() {
         JPanel jPanel =new JPanel();
-        jPanel.setLayout(new GridLayoutManager(3, 1, JBUI.insets(10), -1, -1));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 2, JBUI.emptyInsets(), -1, -1));
-        jPanel.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        jPanel.setLayout(new GridLayoutManager(4, 1, JBUI.insets(10), -1, -1));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 2, JBUI.emptyInsets(), -1, -1));
         jPanel.add(panel4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -94,6 +89,25 @@ public class GeneratePathUI extends DialogWrapper {
                 jTextAreaPath.setText(virtualFile.getPath());
             }
         });
+
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(1, 3, JBUI.emptyInsets(), -1, -1));
+        jPanel.add(panel5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer = new Spacer();
+        panel5.add(spacer, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JPanel panel6 = new JPanel();
+        panel6.setLayout(new GridLayoutManager(1, 1, JBUI.emptyInsets(), -1, -1));
+        panel5.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        JRadioButton again = new JRadioButton();
+        again.setText("重新生成文件");
+        again.addActionListener(l -> this.generateFileFlag=again.isSelected());
+        panel6.add(again, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
         return jPanel;
+    }
+
+
+    public boolean getGenerateFileFlag() {
+        return generateFileFlag;
     }
 }
