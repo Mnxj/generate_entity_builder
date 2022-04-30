@@ -17,15 +17,11 @@
         <br> Welcome to feedback at any time.       Email:tianhang.shi@thoughtworks.com<br>
         ]]></description>
     <change-notes><![CDATA[
-        Features:<br>
-        1. Different projects can back up different address information.<br>
-        2. Multiple dependencies can also be handled.<br>
-        3. You can select or enter a directory.<br>
-        4. Handles collection dependencies。<br>
-        5.You can import properties of inheritance relationships<br>
-        6.Can automatically import the packages<br>
-        7.Overrides all collection processing<br>
-        8.Add different package structure handling<br><br>
+
+        2022-04-30<br>
+        新功能：是否重新生成文件<br>
+        修复：lombok 对原始数据和封装类定义的区别<br><br>
+
 
         2021-11-17<br>
         1、重新设计UI界面<br>
@@ -58,6 +54,16 @@
 
         2022-01-17<br>
         1、修复build花括号少一个空格的情况<br>
+
+        Features:<br>
+        1. Different projects can back up different address information.<br>
+        2. Multiple dependencies can also be handled.<br>
+        3. You can select or enter a directory.<br>
+        4. Handles collection dependencies。<br>
+        5.You can import properties of inheritance relationships<br>
+        6.Can automatically import the packages<br>
+        7.Overrides all collection processing<br>
+        8.Add different package structure handling<br><br>
         ]]></change-notes>
     <idea-version since-build="203.0" until-build="213.*"/>
     <extensions defaultExtensionNs="com.intellij">
