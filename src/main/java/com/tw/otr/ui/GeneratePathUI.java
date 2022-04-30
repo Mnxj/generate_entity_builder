@@ -11,18 +11,20 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.ui.JBUI;
 import com.tw.otr.component.ConfigState;
+import com.tw.otr.component.EntityBuilderService;
+import com.tw.otr.notification.MyNotificationGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
-import static com.tw.otr.util.Utils.generateFile;
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 
 public class GeneratePathUI extends DialogWrapper {
-    private Project project;
+    private final Project project;
     private ConfigState configState;
     private JTextArea jTextAreaPath;
     private boolean flag;
@@ -33,16 +35,30 @@ public class GeneratePathUI extends DialogWrapper {
         super(true);
         setTitle("生成entityBuilder");
         this.project=project;
-        this.flag=false;
         this.configState=readFileOrFindFolder(project);
         init();
     }
 
     @Override
     protected void doOKAction() {
-        generateFile(this.project,this.jTextAreaPath.getText().trim());
+        generatePath(this.jTextAreaPath.getText().trim());
         this.flag=true;
         super.doOKAction();
+    }
+
+    private void generatePath(String pathData) {
+        File existsPath=new File(pathData);
+        if (existsPath.exists()&&existsPath.isFile()){
+            MyNotificationGroup.notifyError(this.project,"路径错误\n"+pathData);
+        } else{
+            existsPath.mkdirs();
+        }
+        if (pathData.indexOf('/')==-1){
+            return;
+        }
+        this.configState = EntityBuilderService.getInstance(this.project).getState();
+        this.configState.setPath(pathData);
+        EntityBuilderService.getInstance(this.project).loadState(this.configState);
     }
 
     public boolean getFlag() {

@@ -7,7 +7,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.JBUI;
 import com.tw.otr.component.MyJCheckBox;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -18,11 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.tw.otr.util.Utils.generateFile;
-
 public class SelectClassUI extends DialogWrapper {
 
-    private Map<String,PsiClassImpl> childClassMap =new HashMap<>();
+    private final Map<String,PsiClassImpl> childClassMap =new HashMap<>();
     private JList<String> list;
 
     public SelectClassUI(Set<PsiClassImpl> childClass) {
@@ -34,7 +31,7 @@ public class SelectClassUI extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        list.getSelectedValuesList().forEach(value->childClassMap.remove(value));
+        list.getSelectedValuesList().forEach(childClassMap::remove);
         super.doOKAction();
     }
 

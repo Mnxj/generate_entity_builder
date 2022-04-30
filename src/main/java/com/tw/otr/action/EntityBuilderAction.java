@@ -18,6 +18,8 @@ import com.tw.otr.notification.MyNotificationGroup;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,8 +30,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.tw.otr.util.Utils.getVariable;
-import static com.tw.otr.util.Utils.lowercaseLetter;
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 public class EntityBuilderAction {
@@ -44,9 +44,11 @@ public class EntityBuilderAction {
     private AnActionEvent event;
     private PsiClassImpl psiClass;
     private StringBuilder buffer;
+    private boolean generateFileFlag;
 
-    public EntityBuilderAction(AnActionEvent event) {
+    public EntityBuilderAction(AnActionEvent event, boolean generateFileFlag) {
         this.event = event;
+        this.generateFileFlag = generateFileFlag;
         this.startBuild();
     }
 
@@ -93,14 +95,14 @@ public class EntityBuilderAction {
             return;
         }
         String packageName = getPackageName(folderName);
-        if (packageName == null){
+        if (packageName == null) {
             return;
         }
         String classNameRepository = className + "Repository";
         buffer.append("package ").append(packageName).append(";\n\n");
         String convertClassName = lowercaseLetter(className);
         buffer.append(IMPORT_VARIABLE).append(importClassNameMap.get(className)).append(";\n");
-        buildImportParams(parentMethods, allReturnType,packageName);
+        buildImportParams(parentMethods, allReturnType, packageName);
         buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
                 .append(builderClassName).append(" {\n")
                 .append("    private ")
@@ -132,7 +134,39 @@ public class EntityBuilderAction {
                     .append(");\n    }\n\n");
         }
         buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
-        generateFile(folderName + "/" + builderClassName + ".java");
+        handleFile(folderName + "/" + builderClassName + ".java",builderClassName);
+    }
+
+    private void handleFile( String fileName,String builderClassName) {
+        if (!generateFileFlag){
+            generateFile(fileName);
+        }else{
+            newContentToFile(fileName,builderClassName);
+        }
+    }
+
+    private void generateFile(String fileName){
+        File file = new File(fileName);
+        try {
+            Files.delete(Path.of(fileName));
+            file.createNewFile();
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file.getAbsoluteFile()))){
+                bufferedWriter.write(buffer.toString());
+            }
+            MyNotificationGroup.notifyInfo(project, "build成功\n" + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            MyNotificationGroup.notifyError(project, "build失败\n" + fileName + "\nerror:" + e.getMessage());
+        }
+    }
+
+    private void newContentToFile(String fileName,String builderClassName){
+        File file = new File(fileName);
+        if (!file.exists()){
+            MyNotificationGroup.notifyError(project, "文件不存在\n" + fileName);
+        }
+
+
     }
 
     private String getPackageName(String folderName) {
@@ -187,29 +221,14 @@ public class EntityBuilderAction {
             }
         }
 
-        importClassNames.stream().filter(importClassName->importClassName.contains( packageName.split("\\.")[0]))
-                .forEach(importClassName->buffer.append(IMPORT_VARIABLE)
-                .append(importClassName).append(";\n"));
+        importClassNames.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0]))
+                .forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
+                        .append(importClassName).append(";\n"));
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
-        importClassNames.stream().filter(importClassName->importClassName.contains(".math.")).forEach(importClassName->buffer.append(IMPORT_VARIABLE)
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")).forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
                 .append(importClassName).append(";\n"));
-        importClassNames.stream().filter(importClassName->importClassName.contains(".util.")).forEach(importClassName->buffer.append(IMPORT_VARIABLE)
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")).forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
                 .append(importClassName).append(";\n"));
-    }
-
-    private void generateFile(String fileName) {
-        File file = new File(fileName);
-        try {
-            file.delete();
-            file.createNewFile();
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-            bufferedWriter.write(buffer.toString());
-            bufferedWriter.close();
-            MyNotificationGroup.notifyInfo(project, "build成功\n" + fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            MyNotificationGroup.notifyError(project, "build失败\n" + fileName + "\nerror:" + e.getMessage());
-        }
     }
 
 
@@ -287,6 +306,16 @@ public class EntityBuilderAction {
             }
         }
         return childClass;
+    }
+
+    private String getVariable(String name) {
+        return name.startsWith("is")
+                ? String.valueOf(name.charAt(2)).toLowerCase()+name.substring(3)
+                : name;
+    }
+
+    private String lowercaseLetter(String className) {
+        return Character.toLowerCase(className.charAt(0)) + className.substring(1);
     }
 
     private void close() {

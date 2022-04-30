@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.tw.otr.action.EntityBuilderAction;
+import com.tw.otr.ui.CoverRepeatUI;
 import com.tw.otr.ui.GeneratePathUI;
 import com.tw.otr.ui.SelectClassUI;
 
@@ -18,7 +19,11 @@ public class GenerateEntityBuilder extends AnAction {
         boolean flag = generateUI.getFlag();
         generateUI.close(DialogWrapper.OK_EXIT_CODE);
         if (flag){
-            EntityBuilderAction entityBuilderAction= new EntityBuilderAction(event);
+            CoverRepeatUI coverRepeatUI = new CoverRepeatUI();
+            coverRepeatUI.show();
+            boolean generateFileFlag = coverRepeatUI.getGenerateFileFlag();
+            coverRepeatUI.close(DialogWrapper.OK_EXIT_CODE);
+            EntityBuilderAction entityBuilderAction= new EntityBuilderAction(event,generateFileFlag);
             SelectClassUI selectClassUI=new SelectClassUI(entityBuilderAction.getReturnType());
             selectClassUI.show();
             entityBuilderAction.setChildClass(selectClassUI.getChildClass());
