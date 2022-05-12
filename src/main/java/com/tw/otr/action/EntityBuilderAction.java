@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
@@ -46,6 +47,8 @@ public class EntityBuilderAction {
     private AnActionEvent event;
     private PsiClassImpl psiClass;
     private StringBuilder buffer;
+    private StringBuilder bufferWithDefault;
+    private Set<String> oldImport;
     private boolean generateFileFlag;
 
     public EntityBuilderAction(AnActionEvent event, boolean generateFileFlag) {
@@ -100,43 +103,48 @@ public class EntityBuilderAction {
         if (packageName == null) {
             return;
         }
-        String classNameRepository = className + "Repository";
-        buffer.append("package ").append(packageName).append(";\n\n");
-        String convertClassName = lowercaseLetter(className);
-        buffer.append(IMPORT_VARIABLE).append(importClassNameMap.get(className)).append(";\n");
-        buildImportParams(parentMethods, allReturnType, packageName);
-        buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
-                .append(builderClassName).append(" {\n")
-                .append("    private ")
-                .append(className)
-                .append(" ")
-                .append(convertClassName)
-                .append(" = new ")
-                .append(className)
-                .append("();\n\n");
-        buffer.append("    public static ")
-                .append(builderClassName)
-                .append(" withDefault() {\n        return new ")
-                .append(builderClassName)
-                .append("();\n    }\n\n");
-        buffer.append(PUBLIC_VARIABLE)
-                .append(className)
-                .append(" build() {\n        return ")
-                .append(convertClassName)
-                .append(";\n    }\n\n");
-        if (!className.endsWith("DTO")) {
+        try {
+            getBufferWithDefault(folderName + "/" + builderClassName + ".java");
+            String classNameRepository = className + "Repository";
+            buffer.append("package ").append(packageName).append(";\n\n");
+            String convertClassName = lowercaseLetter(className);
+            buffer.append(IMPORT_VARIABLE).append(importClassNameMap.get(className)).append(";\n");
+            buildImportParams(parentMethods, allReturnType, packageName);
+            buffer.append("\n@NoArgsConstructor(access = AccessLevel.PRIVATE)\npublic class ")
+                    .append(builderClassName).append(" {\n")
+                    .append("    private ")
+                    .append(className)
+                    .append(" ")
+                    .append(convertClassName)
+                    .append(" = new ")
+                    .append(className)
+                    .append("();\n\n");
+            buffer.append("    public static ")
+                    .append(builderClassName)
+                    .append(" withDefault() {\n        return new ")
+                    .append(builderClassName)
+                    .append("();\n    }\n\n");
             buffer.append(PUBLIC_VARIABLE)
                     .append(className)
-                    .append(" persist() {\n        ")
-                    .append(classNameRepository)
-                    .append(" repository = SpringApplicationContext.getBean(")
-                    .append(classNameRepository)
-                    .append(".class);\n        return repository.saveAndFlush(")
+                    .append(" build() {\n        return ")
                     .append(convertClassName)
-                    .append(");\n    }\n\n");
+                    .append(";\n    }\n\n");
+            if (!className.endsWith("DTO")) {
+                buffer.append(PUBLIC_VARIABLE)
+                        .append(className)
+                        .append(" persist() {\n        ")
+                        .append(classNameRepository)
+                        .append(" repository = SpringApplicationContext.getBean(")
+                        .append(classNameRepository)
+                        .append(".class);\n        return repository.saveAndFlush(")
+                        .append(convertClassName)
+                        .append(");\n    }\n\n");
+            }
+            buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
+            handleFile(folderName + "/" + builderClassName + ".java");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
-        handleFile(folderName + "/" + builderClassName + ".java");
     }
 
     private void handleFile(String fileName) {
@@ -158,32 +166,9 @@ public class EntityBuilderAction {
             MyNotificationGroup.notifyError(project, "build失败\n" + fileName + "\nerror:" + e.getMessage());
         }
     }
-
-
     private void newContentToFile(String fileName) {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            MyNotificationGroup.notifyError(project, "文件不存在\n" + fileName);
-        }
         String newContent = buffer.toString();
         try {
-            StringBuilder bufferWithDefault = new StringBuilder();
-            bufferWithDefault.append(" withDefault() {\n");
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-                String line;
-                boolean isWithDefault = false;
-                while ((line = bufferedReader.readLine()) != null) {
-                    if (isWithDefault) {
-                        bufferWithDefault.append(line).append("\n");
-                        if (line.contains("}")) {
-                            break;
-                        }
-                    }
-                    if (line.contains("withDefault()")) {
-                        isWithDefault = true;
-                    }
-                }
-            }
             Matcher matcher = regex("( withDefault\\(\\) \\{\\n)([\\s\\S]*?)    }\\n", newContent);
             String oldWithDefault = null;
             if (matcher.find()) {
@@ -193,9 +178,51 @@ public class EntityBuilderAction {
             int length = oldWithDefault.length();
             String leftContent = newContent.substring(0, newContent.indexOf(oldWithDefault));
             String rightContent = newContent.substring(newContent.indexOf(oldWithDefault) + length);
-            writeContent(file, leftContent + bufferWithDefault + rightContent);
+            writeContent(new File(fileName), leftContent + bufferWithDefault + rightContent);
         } catch (IOException e) {
             MyNotificationGroup.notifyError(project, "生成失败\n" + fileName + "\nerror:" + e.getMessage());
+        }
+    }
+
+    private void getBufferWithDefault(String  fileName) throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            MyNotificationGroup.notifyError(project, "文件不存在\n" + fileName);
+        }else {
+            bufferWithDefault = new StringBuilder();
+            oldImport = new HashSet<>();
+            Set<String> oldImports =new HashSet<>();
+            bufferWithDefault.append(" withDefault() {\n");
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                String line;
+                boolean isWithDefault = false;
+                boolean isImport = true;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if(isImport&&line.startsWith("import")){
+                        oldImports.add(line);
+                        continue;
+                    }
+                    if (isWithDefault) {
+                        bufferWithDefault.append(line).append("\n");
+                        if (line.contains("}")) {
+                            break;
+                        }
+                    }
+                    if (line.contains("withDefault()")) {
+                        isWithDefault = true;
+                        isImport=false;
+                    }
+                }
+            }
+            getParams(bufferWithDefault.toString(),oldImports);
+        }
+    }
+
+    private void getParams(String oldWithDefault,Set<String> oldImports){
+        Matcher regex = regex("(?<=\\()[^\\)]+", oldWithDefault);
+        while(regex.find()){
+            String group = regex.group().replaceAll("[() ,](new )*", "").split("\\.")[0];
+            oldImport.addAll(oldImports.stream().filter(v -> v.contains(group)).collect(Collectors.toSet()));
         }
     }
 
@@ -257,20 +284,34 @@ public class EntityBuilderAction {
                                 if (importClassNameMap.containsKey(s.toLowerCase())) {
                                     importClassNames.add(importClassNameMap.get(s.toLowerCase()));
                                 }
-
                             });
                 }
             }
         }
 
-        importClassNames.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0]))
-                .forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
-                        .append(importClassName).append(";\n"));
+        importClassNames.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0])).forEach(this::saveImportParam);
+
+        oldImport.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0]))
+                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
+
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")).forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
-                .append(importClassName).append(";\n"));
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")).forEach(importClassName -> buffer.append(IMPORT_VARIABLE)
-                .append(importClassName).append(";\n"));
+
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")).forEach(this::saveImportParam);
+
+        oldImport.stream().filter(importClassName -> importClassName.contains(".math."))
+                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
+
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")).forEach(this::saveImportParam);
+
+        oldImport.stream().filter(importClassName -> importClassName.contains(".util."))
+                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
+
+    }
+
+    private void saveImportParam(String importClassName) {
+        String param=IMPORT_VARIABLE+ importClassName +";";
+        oldImport.remove(param);
+        buffer.append(param).append("\n");
     }
 
 

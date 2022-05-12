@@ -18,6 +18,12 @@
         ]]></description>
     <change-notes><![CDATA[
 
+        2022-05-12<br>
+        新功能：<br>
+        1、对idea新版本的适配<br>
+        2、对withDefault()引入的包在import中保留。<br>
+        <br><br>
+
         2022-04-30<br>
         新功能：是否重新生成文件<br>
         修复：lombok 对原始数据和封装类定义的区别<br><br>
@@ -65,7 +71,7 @@
         7.Overrides all collection processing<br>
         8.Add different package structure handling<br><br>
         ]]></change-notes>
-    <idea-version since-build="203.0" until-build="213.*"/>
+    <idea-version since-build="203.0" until-build="221.*"/>
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <notificationGroup id="Custom Notification Group" displayType="BALLOON"/>
