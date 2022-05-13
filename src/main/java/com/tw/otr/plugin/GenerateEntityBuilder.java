@@ -16,15 +16,17 @@ public class GenerateEntityBuilder extends AnAction {
         GeneratePathUI generateUI = new GeneratePathUI(event.getRequiredData(CommonDataKeys.PROJECT));
         generateUI.show();
         boolean flag = generateUI.getFlag();
-        boolean generateFileFlag = generateUI.getGenerateFileFlag();
         generateUI.close(DialogWrapper.OK_EXIT_CODE);
         if (flag){
-            EntityBuilderAction entityBuilderAction= new EntityBuilderAction(event,generateFileFlag);
+            EntityBuilderAction entityBuilderAction= new EntityBuilderAction(event,generateUI.getGenerateFileFlag());
             SelectClassUI selectClassUI=new SelectClassUI(entityBuilderAction.getReturnType());
             selectClassUI.show();
-            entityBuilderAction.setChildClass(selectClassUI.getChildClass());
+            boolean selectFlag = selectClassUI.getSelectFlag();
+            if (selectFlag){
+                entityBuilderAction.setChildClass(selectClassUI.getChildClass());
+                entityBuilderAction.generateBuild();
+            }
             selectClassUI.close(DialogWrapper.OK_EXIT_CODE);
-            entityBuilderAction.generateBuild();
         }
     }
 }

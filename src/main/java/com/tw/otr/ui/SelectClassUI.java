@@ -21,10 +21,16 @@ public class SelectClassUI extends DialogWrapper {
 
     private final Map<String,PsiClassImpl> childClassMap =new HashMap<>();
     private JList<String> list;
+    private boolean selectFlag;
+
+    public boolean getSelectFlag(){
+        return selectFlag;
+    }
 
     public SelectClassUI(Set<PsiClassImpl> childClass) {
         super(true);
         setTitle("选择需要生成依赖");
+        this.selectFlag=false;
         childClass.forEach(child->childClassMap.put(child.toString(),child));
         init();
     }
@@ -32,6 +38,7 @@ public class SelectClassUI extends DialogWrapper {
     @Override
     protected void doOKAction() {
         list.getSelectedValuesList().forEach(childClassMap::remove);
+        this.selectFlag=true;
         super.doOKAction();
     }
 

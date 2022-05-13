@@ -3,7 +3,9 @@ package com.tw.otr.action;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,5 +45,29 @@ class regexTest {
         String str ="(DEWRWER),(\"),(sd),(new Liet(2323)),(newNew())";
         System.out.println(str.replaceAll("[() ,](new )*", ""));
         System.out.println();
+    }
+
+    @Test
+    void should_get_1(){
+        Set<String> strings=new HashSet<>();
+        strings.add("Test");
+        strings.add("add");
+        Set<String> imports=new HashSet<>();
+        Set<String> test=new HashSet<>();
+        imports.add("import Test");
+        imports.add("impoer add");
+        imports.add("import sdsd");
+        strings.forEach(value -> imports.forEach(param->{
+            if (param.contains(value)){
+                test.add(param);
+            }
+        }));
+        System.out.println(test);
+    }
+
+    @Test
+    void should_get_2(){
+        String str ="import imasdsd.asdsd;";
+        System.out.println(str.replaceAll("(import )+",""));
     }
 }

@@ -18,6 +18,11 @@
         ]]></description>
     <change-notes><![CDATA[
 
+        2022-05-13<br>
+        1、上次更新空值的bug<br>
+        2、修复之前对于参数处理遗留的bug。<br>
+        <br><br>
+
         2022-05-12<br>
         新功能：<br>
         1、对idea新版本的适配<br>

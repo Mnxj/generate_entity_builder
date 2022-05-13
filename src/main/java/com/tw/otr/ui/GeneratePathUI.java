@@ -35,6 +35,8 @@ public class GeneratePathUI extends DialogWrapper {
         super(true);
         setTitle("生成entityBuilder");
         this.project=project;
+        this.flag=false;
+        this.generateFileFlag=false;
         this.configState=readFileOrFindFolder(project);
         init();
     }

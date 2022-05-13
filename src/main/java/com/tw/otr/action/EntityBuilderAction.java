@@ -12,6 +12,7 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.jgoodies.common.base.Strings;
 import com.tw.otr.component.ConfigState;
 import com.tw.otr.notification.MyNotificationGroup;
 
@@ -68,7 +69,6 @@ public class EntityBuilderAction {
             return;
         }
         this.psiClass = (PsiClassImpl) psiElement;
-        buffer = new StringBuilder();
     }
 
     public void generateBuild() {
@@ -104,6 +104,7 @@ public class EntityBuilderAction {
             return;
         }
         try {
+            buffer = new StringBuilder();
             getBufferWithDefault(folderName + "/" + builderClassName + ".java");
             String classNameRepository = className + "Repository";
             buffer.append("package ").append(packageName).append(";\n\n");
@@ -148,6 +149,7 @@ public class EntityBuilderAction {
     }
 
     private void handleFile(String fileName) {
+        System.out.println(generateFileFlag);
         if (generateFileFlag) {
             generateFile(fileName);
         } else {
@@ -160,70 +162,100 @@ public class EntityBuilderAction {
         try {
             file.createNewFile();
             writeContent(file, buffer.toString());
-
         } catch (Exception e) {
             e.printStackTrace();
             MyNotificationGroup.notifyError(project, "build失败\n" + fileName + "\nerror:" + e.getMessage());
         }
-    }
-    private void newContentToFile(String fileName) {
-        String newContent = buffer.toString();
-        try {
-            Matcher matcher = regex("( withDefault\\(\\) \\{\\n)([\\s\\S]*?)    }\\n", newContent);
-            String oldWithDefault = null;
-            if (matcher.find()) {
-                oldWithDefault = matcher.group();
-            }
-            assert oldWithDefault != null;
-            int length = oldWithDefault.length();
-            String leftContent = newContent.substring(0, newContent.indexOf(oldWithDefault));
-            String rightContent = newContent.substring(newContent.indexOf(oldWithDefault) + length);
-            writeContent(new File(fileName), leftContent + bufferWithDefault + rightContent);
-        } catch (IOException e) {
-            MyNotificationGroup.notifyError(project, "生成失败\n" + fileName + "\nerror:" + e.getMessage());
-        }
+
     }
 
-    private void getBufferWithDefault(String  fileName) throws IOException {
+    private void newContentToFile(String fileName) {
+        System.out.println(1);
         File file = new File(fileName);
-        if (!file.exists()) {
-            MyNotificationGroup.notifyError(project, "文件不存在\n" + fileName);
-        }else {
-            bufferWithDefault = new StringBuilder();
-            oldImport = new HashSet<>();
-            Set<String> oldImports =new HashSet<>();
+        String newContent = buffer.toString();
+        if (file.exists()) {
+            try {
+                Matcher matcher = regex("( withDefault\\(\\) \\{\\n)([\\s\\S]*?)    }\\n", newContent);
+                String newWithDefault = null;
+                if (matcher.find()) {
+                    newWithDefault = matcher.group();
+                }
+                int length = newWithDefault.length();
+                String leftContent = newContent.substring(0, newContent.indexOf(newWithDefault));
+                System.out.println(bufferWithDefault);
+                String rightContent = newContent.substring(newContent.indexOf(newWithDefault) + length);
+                writeContent(file, leftContent + bufferWithDefault + rightContent);
+            } catch (IOException e) {
+                MyNotificationGroup.notifyError(project, "生成失败\n" + fileName + "\nerror:" + e.getMessage());
+            }
+        }else{
+            MyNotificationGroup.notifyError(project, "生成失败\n" + fileName );
+        }
+
+    }
+
+    private void getBufferWithDefault(String fileName) throws IOException {
+        File file = new File(fileName);
+        bufferWithDefault = new StringBuilder();
+        StringBuilder persist = new StringBuilder();
+        oldImport = new HashSet<>();
+        if (file.exists()) {
+            Set<String> oldImports = new HashSet<>();
             bufferWithDefault.append(" withDefault() {\n");
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 String line;
                 boolean isWithDefault = false;
                 boolean isImport = true;
+                boolean isPersist = false;
                 while ((line = bufferedReader.readLine()) != null) {
-                    if(isImport&&line.startsWith("import")){
+                    if (isImport && line.startsWith("import")) {
                         oldImports.add(line);
                         continue;
                     }
                     if (isWithDefault) {
                         bufferWithDefault.append(line).append("\n");
                         if (line.contains("}")) {
+                            isWithDefault = false;
+                        }
+                        continue;
+                    }
+                    if (isPersist) {
+                        if (line.contains("}")) {
                             break;
                         }
+                        persist.append(line);
+                    }
+                    if (line.contains("persist()")) {
+                        isPersist = true;
+                        isImport = false;
                     }
                     if (line.contains("withDefault()")) {
                         isWithDefault = true;
-                        isImport=false;
+                        isImport = false;
                     }
                 }
             }
-            getParams(bufferWithDefault.toString(),oldImports);
+            getParams(bufferWithDefault.toString(), oldImports, persist.toString());
         }
     }
 
-    private void getParams(String oldWithDefault,Set<String> oldImports){
-        Matcher regex = regex("(?<=\\()[^\\)]+", oldWithDefault);
-        while(regex.find()){
-            String group = regex.group().replaceAll("[() ,](new )*", "").split("\\.")[0];
-            oldImport.addAll(oldImports.stream().filter(v -> v.contains(group)).collect(Collectors.toSet()));
+    private void getParams(String oldWithDefault, Set<String> oldImports, String persist) {
+        Set<String> values = new HashSet<>();
+        if (!Strings.isEmpty(persist)) {
+            values.addAll(Arrays.stream(persist.split("[ ().;=]")).filter(param -> param.length() > 1 && Character.isUpperCase(param.charAt(0))).collect(Collectors.toSet()));
         }
+        Matcher regex = regex("(?<=\\()[^\\)]+", oldWithDefault);
+        while (regex.find()) {
+            String group = regex.group().replaceAll("[() ,](new )*", "").split("\\.")[0];
+            values.add(group);
+        }
+        System.out.println(oldImports);
+        System.out.println(values);
+        values.forEach(value -> oldImports.forEach(param->{
+            if (param.contains(value)){
+                oldImport.add(param.replaceAll("(import )*","").replaceAll(";",""));
+            }
+        }));
     }
 
     private void writeContent(File file, String content) throws IOException {
@@ -288,30 +320,21 @@ public class EntityBuilderAction {
                 }
             }
         }
-
-        importClassNames.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0])).forEach(this::saveImportParam);
-
-        oldImport.stream().filter(importClassName -> importClassName.contains(packageName.split("\\.")[0]))
-                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
+        importClassNames.addAll(oldImport);
+        String[] packageNames = packageName.split("\\.");
+        String name= packageNames[0]+"."+packageNames[1];
+        importClassNames.stream().filter(importClassName -> importClassName.contains(name)).forEach(this::saveImportParam);
 
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
 
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")).forEach(this::saveImportParam);
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")&&!importClassName.contains(name)).forEach(this::saveImportParam);
 
-        oldImport.stream().filter(importClassName -> importClassName.contains(".math."))
-                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
-
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")).forEach(this::saveImportParam);
-
-        oldImport.stream().filter(importClassName -> importClassName.contains(".util."))
-                .forEach(importClassName -> buffer.append(importClassName).append("\n"));
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")&&!importClassName.contains(name)).forEach(this::saveImportParam);
 
     }
 
     private void saveImportParam(String importClassName) {
-        String param=IMPORT_VARIABLE+ importClassName +";";
-        oldImport.remove(param);
-        buffer.append(param).append("\n");
+        buffer.append(IMPORT_VARIABLE).append(importClassName).append(";\n");
     }
 
 
@@ -402,5 +425,6 @@ public class EntityBuilderAction {
     private void close() {
         generateClassName.clear();
         importClassNameMap.clear();
+        oldImport.clear();
     }
 }
