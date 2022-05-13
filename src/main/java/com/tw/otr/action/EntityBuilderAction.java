@@ -48,7 +48,6 @@ public class EntityBuilderAction {
     private AnActionEvent event;
     private PsiClassImpl psiClass;
     private StringBuilder buffer;
-    private StringBuilder bufferWithDefault;
     private Set<String> oldImport;
     private boolean generateFileFlag;
 
@@ -105,7 +104,7 @@ public class EntityBuilderAction {
         }
         try {
             buffer = new StringBuilder();
-            getBufferWithDefault(folderName + "/" + builderClassName + ".java");
+            String withDefault = getBufferWithDefault(folderName + "/" + builderClassName + ".java");
             String classNameRepository = className + "Repository";
             buffer.append("package ").append(packageName).append(";\n\n");
             String convertClassName = lowercaseLetter(className);
@@ -130,7 +129,7 @@ public class EntityBuilderAction {
                     .append(" build() {\n        return ")
                     .append(convertClassName)
                     .append(";\n    }\n\n");
-            if (!className.endsWith("DTO")) {
+            if (!className.toUpperCase().endsWith("DTO")) {
                 buffer.append(PUBLIC_VARIABLE)
                         .append(className)
                         .append(" persist() {\n        ")
@@ -142,18 +141,18 @@ public class EntityBuilderAction {
                         .append(");\n    }\n\n");
             }
             buildWithParams(builderClassName, parentMethods, variableClassName, allReturnType);
-            handleFile(folderName + "/" + builderClassName + ".java");
+            handleFile(folderName + "/" + builderClassName + ".java", withDefault);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void handleFile(String fileName) {
+    private void handleFile(String fileName, String withDefault) {
         System.out.println(generateFileFlag);
         if (generateFileFlag) {
             generateFile(fileName);
         } else {
-            newContentToFile(fileName);
+            newContentToFile(fileName, withDefault);
         }
     }
 
@@ -169,7 +168,7 @@ public class EntityBuilderAction {
 
     }
 
-    private void newContentToFile(String fileName) {
+    private void newContentToFile(String fileName, String withDefault) {
         System.out.println(1);
         File file = new File(fileName);
         String newContent = buffer.toString();
@@ -182,21 +181,20 @@ public class EntityBuilderAction {
                 }
                 int length = newWithDefault.length();
                 String leftContent = newContent.substring(0, newContent.indexOf(newWithDefault));
-                System.out.println(bufferWithDefault);
                 String rightContent = newContent.substring(newContent.indexOf(newWithDefault) + length);
-                writeContent(file, leftContent + bufferWithDefault + rightContent);
+                writeContent(file, leftContent + withDefault + rightContent);
             } catch (IOException e) {
                 MyNotificationGroup.notifyError(project, "生成失败\n" + fileName + "\nerror:" + e.getMessage());
             }
-        }else{
-            MyNotificationGroup.notifyError(project, "生成失败\n" + fileName );
+        } else {
+            MyNotificationGroup.notifyError(project, "生成失败\n" + fileName);
         }
 
     }
 
-    private void getBufferWithDefault(String fileName) throws IOException {
+    private String getBufferWithDefault(String fileName) throws IOException {
         File file = new File(fileName);
-        bufferWithDefault = new StringBuilder();
+        StringBuilder bufferWithDefault = new StringBuilder();
         StringBuilder persist = new StringBuilder();
         oldImport = new HashSet<>();
         if (file.exists()) {
@@ -235,8 +233,12 @@ public class EntityBuilderAction {
                     }
                 }
             }
-            getParams(bufferWithDefault.toString(), oldImports, persist.toString());
+            System.out.println(bufferWithDefault);
+            if (!generateFileFlag) {
+                getParams(bufferWithDefault.toString(), oldImports, persist.toString());
+            }
         }
+        return bufferWithDefault.toString();
     }
 
     private void getParams(String oldWithDefault, Set<String> oldImports, String persist) {
@@ -251,9 +253,9 @@ public class EntityBuilderAction {
         }
         System.out.println(oldImports);
         System.out.println(values);
-        values.forEach(value -> oldImports.forEach(param->{
-            if (param.contains(value)){
-                oldImport.add(param.replaceAll("(import )*","").replaceAll(";",""));
+        values.forEach(value -> oldImports.forEach(param -> {
+            if (param.contains(value)) {
+                oldImport.add(param.replaceAll("(import )*", "").replaceAll(";", ""));
             }
         }));
     }
@@ -322,14 +324,14 @@ public class EntityBuilderAction {
         }
         importClassNames.addAll(oldImport);
         String[] packageNames = packageName.split("\\.");
-        String name= packageNames[0]+"."+packageNames[1];
+        String name = packageNames[0] + "." + packageNames[1];
         importClassNames.stream().filter(importClassName -> importClassName.contains(name)).forEach(this::saveImportParam);
 
         buffer.append("\nimport lombok.AccessLevel;\n" + "import lombok.NoArgsConstructor;\n\n");
 
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.")&&!importClassName.contains(name)).forEach(this::saveImportParam);
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".math.") && !importClassName.contains(name)).forEach(this::saveImportParam);
 
-        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.")&&!importClassName.contains(name)).forEach(this::saveImportParam);
+        importClassNames.stream().filter(importClassName -> importClassName.contains(".util.") && !importClassName.contains(name)).forEach(this::saveImportParam);
 
     }
 
