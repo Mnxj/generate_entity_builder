@@ -34,28 +34,28 @@ public class GeneratePathUI extends DialogWrapper {
     public GeneratePathUI(Project project) {
         super(true);
         setTitle("生成entityBuilder");
-        this.project=project;
-        this.flag=false;
-        this.generateFileFlag=false;
-        this.configState=readFileOrFindFolder(project);
+        this.project = project;
+        this.flag = false;
+        this.generateFileFlag = false;
+        this.configState = readFileOrFindFolder(project);
         init();
     }
 
     @Override
     protected void doOKAction() {
         generatePath(this.jTextAreaPath.getText().trim());
-        this.flag=true;
+        this.flag = true;
         super.doOKAction();
     }
 
     private void generatePath(String pathData) {
-        File existsPath=new File(pathData);
-        if (existsPath.exists()&&existsPath.isFile()){
-            MyNotificationGroup.notifyError(this.project,"路径错误\n"+pathData);
-        } else{
+        File existsPath = new File(pathData);
+        if (existsPath.exists() && existsPath.isFile()) {
+            MyNotificationGroup.notifyError(this.project, "路径错误\n" + pathData);
+        } else {
             existsPath.mkdirs();
         }
-        if (pathData.indexOf('/')==-1){
+        if (pathData.indexOf('/') == -1) {
             return;
         }
         this.configState = EntityBuilderService.getInstance(this.project).getState();
@@ -74,20 +74,20 @@ public class GeneratePathUI extends DialogWrapper {
 
     @NotNull
     private JPanel getJPanel() {
-        JPanel jPanel =new JPanel();
+        JPanel jPanel = new JPanel();
         jPanel.setLayout(new GridLayoutManager(4, 1, JBUI.insets(10), -1, -1));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 2, JBUI.emptyInsets(), -1, -1));
         jPanel.add(panel4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        jTextAreaPath = new JTextArea(this.configState.getPath(),2,40);
+        jTextAreaPath = new JTextArea(this.configState.getPath(), 2, 40);
         panel4.add(jTextAreaPath, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
-        jButton=new JButton("选择目录or输入");
+        jButton = new JButton("选择目录or输入");
         panel4.add(jButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         jButton.addActionListener(e -> {
             VirtualFile virtualFile = FileChooser.chooseFile(
                     FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                     project, ProjectUtil.guessProjectDir(project));
-            if (virtualFile!=null){
+            if (virtualFile != null) {
                 jTextAreaPath.setText(virtualFile.getPath());
             }
         });
@@ -102,7 +102,7 @@ public class GeneratePathUI extends DialogWrapper {
         panel5.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         JRadioButton again = new JRadioButton();
         again.setText("重新生成文件");
-        again.addActionListener(l -> this.generateFileFlag=again.isSelected());
+        again.addActionListener(l -> this.generateFileFlag = again.isSelected());
         panel6.add(again, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
         return jPanel;

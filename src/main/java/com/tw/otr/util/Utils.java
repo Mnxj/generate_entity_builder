@@ -6,7 +6,7 @@ import com.tw.otr.component.EntityBuilderService;
 
 public class Utils {
 
-    private Utils(){
+    private Utils() {
 
     }
 

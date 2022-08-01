@@ -19,26 +19,26 @@ import java.util.Set;
 
 public class SelectClassUI extends DialogWrapper {
 
-    private final Map<String,PsiClassImpl> childClassMap =new HashMap<>();
+    private final Map<String, PsiClassImpl> childClassMap = new HashMap<>();
     private JList<String> list;
     private boolean selectFlag;
 
-    public boolean getSelectFlag(){
+    public boolean getSelectFlag() {
         return selectFlag;
     }
 
     public SelectClassUI(Set<PsiClassImpl> childClass) {
         super(true);
         setTitle("选择需要生成依赖");
-        this.selectFlag=false;
-        childClass.forEach(child->childClassMap.put(child.toString(),child));
+        this.selectFlag = false;
+        childClass.forEach(child -> childClassMap.put(child.toString(), child));
         init();
     }
 
     @Override
     protected void doOKAction() {
         list.getSelectedValuesList().forEach(childClassMap::remove);
-        this.selectFlag=true;
+        this.selectFlag = true;
         super.doOKAction();
     }
 
@@ -56,7 +56,7 @@ public class SelectClassUI extends DialogWrapper {
         panel1.setLayout(new GridLayoutManager(1, 1, JBUI.emptyInsets(), -1, -1));
         contentPane.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         list = new JBList<>(strings);
-        MyJCheckBox myJCheckBox=new MyJCheckBox();
+        MyJCheckBox myJCheckBox = new MyJCheckBox();
         list.setCellRenderer(myJCheckBox);
         list.setSelectionModel(new DefaultListSelectionModel() {
             @Override
