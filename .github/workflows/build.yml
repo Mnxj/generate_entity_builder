@@ -68,8 +68,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: "${{ steps.properties.outputs.name }} - ${{ steps.properties.outputs.version }}"
-          path: ./build/distributions/*
+          path: ./build/libs/*
 
   # Prepare a draft release for GitHub Releases page for the manual verification
   # If accepted and published, release workflow would be triggered
