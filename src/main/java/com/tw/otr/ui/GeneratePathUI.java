@@ -1,11 +1,14 @@
 package com.tw.otr.ui;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -25,18 +28,20 @@ import static com.tw.otr.util.Utils.readFileOrFindFolder;
 
 public class GeneratePathUI extends DialogWrapper {
     private final Project project;
+    private final PsiClassImpl psiElement;
     private ConfigState configState;
     private JTextArea jTextAreaPath;
     private boolean flag;
-    boolean generateFileFlag;
+    boolean existsFileFlag;
     private JButton jButton;
 
-    public GeneratePathUI(Project project) {
+    public GeneratePathUI(AnActionEvent event) {
         super(true);
         setTitle("生成entityBuilder");
-        this.project=project;
+        this.project = event.getRequiredData(CommonDataKeys.PROJECT);
+        this.psiElement =  (PsiClassImpl)event.getData(CommonDataKeys.PSI_ELEMENT);
         this.flag=false;
-        this.generateFileFlag=false;
+        this.existsFileFlag =false;
         this.configState=readFileOrFindFolder(project);
         init();
     }
@@ -58,6 +63,7 @@ public class GeneratePathUI extends DialogWrapper {
         if (pathData.indexOf('/')==-1){
             return;
         }
+        this.existsFileFlag = new File(existsPath +"/"+ this.psiElement.getName() + "Builder.java").exists();
         this.configState = EntityBuilderService.getInstance(this.project).getState();
         this.configState.setPath(pathData);
         EntityBuilderService.getInstance(this.project).loadState(this.configState);
@@ -100,16 +106,11 @@ public class GeneratePathUI extends DialogWrapper {
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 1, JBUI.emptyInsets(), -1, -1));
         panel5.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        JRadioButton again = new JRadioButton();
-        again.setText("重新生成文件");
-        again.addActionListener(l -> this.generateFileFlag=again.isSelected());
-        panel6.add(again, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-
         return jPanel;
     }
 
 
-    public boolean getGenerateFileFlag() {
-        return generateFileFlag;
+    public boolean getExistsFileFlag() {
+        return existsFileFlag;
     }
 }
