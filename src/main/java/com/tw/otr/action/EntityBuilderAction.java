@@ -251,8 +251,6 @@ public class EntityBuilderAction {
             String group = regex.group().replaceAll("[() ,](new )*", "").split("\\.")[0];
             values.add(group);
         }
-        System.out.println(oldImports);
-        System.out.println(values);
         values.forEach(value -> oldImports.forEach(param -> {
             if (param.contains(value)) {
                 oldImport.add(param.replaceAll("(import )*", "").replaceAll(";", ""));
